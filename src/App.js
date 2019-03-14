@@ -1,56 +1,65 @@
 import React, { Component } from 'react'
+import ReactDOM from 'react-dom'
 import './App.css'
 import axios from 'axios';
 
-class App extends Component {
-  constructor () {
-    super()
-    this.getWeather = this.getWeather.bind(this)
+class Search extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      searchText : '',
+      webData: ''
+    }
+    this.updateText = this.updateText.bind(this);
+    this.getData = this.getData.bind(this);
   }
 
-  getWeather () {
-     axios.get('https://samples.openweathermap.org/data/2.5/weather?q=London,uk&appid=40cb8d688c25291a4fe87a94407b90a0')
+ updateText(e){
+   this.setState({searchText: e.target.value})
+ }
+ getData(){
+   let x = axios.get('https://api.openweathermap.org/data/2.5/weather?q='+this.state.searchText+'&appid=c47d8894d3074829c17d9ff1e70584b4')
        .then(function (response) {
-        // handle success
-        console.log(typeof response.data)
-        console.log(Object.keys(response.data));
-        console.log(response.data)
-       })
+          console.log(Object.keys(response.data));
+          console.log(response.data)
+          return response.json();
+        })
        .catch(function (error) {
-         console.log("Sorry bro, something went wrong",error);
+          console.log("Sorry bro, something went wrong",error);
        })
        .then(function () {
-         console.log("THANK YOU VISIT AGAIN");
-       });
-          
-          //single day https://api.darksky.net/forecast/40cb8d688c25291a4fe87a94407b90a0/17.3850,78.4867?units=auto
-          
-          //Forecast: https://api.darksky.net/forecast/40cb8d688c25291a4fe87a94407b90a0/17.3850,78.4867,2019-03-13T18:25:00Z?units=auto
-       //FORECAST DATA
-          //   axios.get('https://api.darksky.net/forecast/40cb8d688c25291a4fe87a94407b90a0/17.3850,78.4867,2019-03-13T18:25:00Z?units=auto')
-      //  .then(function (response) {
-      //   // handle success
-      //   console.log(typeof response.data)
-      //   console.log(Object.keys(response.data));
-      //   console.log(response.data)
-      //  })
-      //  .catch(function (error) {
-      //    console.log("Sorry bro",error);
-      //  })
-      //  .then(function () {
-      //    console.log("THANK YOU VISIT AGAIN");
-      //  });
-
-  }
+          console.log("THANK YOU VISIT AGAIN");
+       })
+      //console.log("Im x"+JSON.parse(x))
+       this.setState({
+      //  //ReactDOM.findDOMNode(this.refs.search).focus();
+       webData : x});
+ }
 
   render () {
     return (
       <div className='app'>
-        <div className='btn-container'>
-          <button className='button' onClick={this.getWeather}>Click Me</button>
+        <div><input type="text"  ref = "search" value = {this.state.searchText} onChange = {this.updateText} placeholder="Search"/>
+            <button className='button' onClick={this.getData}>Get Weather</button>
         </div>
+        <p>{this.state.webData + "Web data " + console.log(typeof this.state.webData)}</p>
       </div>
     )
   }
 }
+
+// class Description extends React.Component{
+  
+// }
+class App extends Component {
+  render(){
+    return(
+      <div>
+        <Search />
+        {/* <Description /> */}
+      </div>
+    )
+  }
+}
+
 export default App
